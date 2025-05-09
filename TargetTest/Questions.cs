@@ -48,42 +48,18 @@ namespace TargetTest
             string json = File.ReadAllText("C:\\Users\\paulo\\source\\repos\\TargetTest\\TargetTest\\dados.json");
 
             List<Faturamento> modelLogList = JsonSerializer.Deserialize<List<Faturamento>>(json);
-            Faturamento menor = modelLogList[0];
-            Faturamento maior = modelLogList[0];
-            
-            foreach (var modelLog in modelLogList)
-            {
-                if ( modelLog.valor > maior.valor)
-                {
-                    maior = modelLog;
-                }
-
-                if (modelLog.valor < menor.valor)
-                {
-                    menor = modelLog;
-                }
-
-            }
 
             List<Faturamento> diasComFaturamento = modelLogList.Where(m => m.valor > 0).ToList();
-            double soma = 0;
-            double media = 0;
-            foreach (var item in diasComFaturamento)
-            {
-                soma += item.valor;
-            }
-            media = soma / diasComFaturamento.Count;
-            int diasAcimaMedia = 0;
-            foreach (var item in diasComFaturamento)
-            {
-                if (item.valor > media)
-                {
-                    diasAcimaMedia++;
-                }
-            }
-            return $"Maior faturamento: Dia: {maior.dia}, Valor: {maior.valor}," +
-                $"Menor faturamento: Dia: {menor.dia}, Valor: {menor.valor}," +
-                $"Número de dias no mês em que o valor de faturamento diário foi superior à média mensal: {diasAcimaMedia}";
+
+            var menor = diasComFaturamento.MinBy(f => f.valor);
+            var maior = diasComFaturamento.MaxBy(f => f.valor);
+
+            double media = diasComFaturamento.Average(f => f.valor);
+            int diasAcimaMedia = diasComFaturamento.Count(f => f.valor > media);
+
+            return $"Maior faturamento: Dia: {maior.dia}, Valor: {maior.valor},\n" +
+                $"Menor faturamento: Dia: {menor.dia}, Valor: {menor.valor},\n" +
+                $"Número de dias no mês em que o valor de faturamento diário foi superior à média mensal: {diasAcimaMedia}\n";
             
         }
 
@@ -97,11 +73,11 @@ namespace TargetTest
             double SP = 67836.43, RJ = 36678.66, MG = 29229.88, ES = 27165.48, Outros = 19849.53;
 
             double total = SP + RJ + MG + ES + Outros;
-            var resultado = $"Percentual de Participacao: SP: {PercentualEstado(SP, total)}%," +
-                $"RJ: {PercentualEstado(RJ, total)}%," +
-                $"MG: {PercentualEstado(MG, total)}%," +
-                $"ES: {PercentualEstado(ES, total)}%," +
-                $"Outros: {PercentualEstado(Outros, total)}%";
+            var resultado = $"Percentual de Participacao: SP: {PercentualEstado(SP, total):F2}%," +
+                $"RJ: {PercentualEstado(RJ, total):F2}%," +
+                $"MG: {PercentualEstado(MG, total):F2}%," +
+                $"ES: {PercentualEstado(ES, total):F2}%," +
+                $"Outros: {PercentualEstado(Outros, total):F2}%";
 
             return resultado;
         }
